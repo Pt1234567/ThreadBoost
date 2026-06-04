@@ -44,6 +44,9 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | POST | `/api/lab/completable-future/report` | Run a small CompletableFuture pipeline |
 | POST | `/api/lab/virtual-threads/demo` | Run a Java 21 virtual thread demo |
 | GET | `/api/events` | View local job events (`job-created`, `job-completed`, `job-failed`) |
+| POST | `/api/distributed/locks/{lockKey}/acquire` | Try to acquire a local Redis-style lock |
+| POST | `/api/distributed/locks/{lockKey}/release` | Release a local Redis-style lock |
+| POST | `/api/distributed/rate-limit/check` | Run token-bucket rate limit check |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start
@@ -119,6 +122,8 @@ The H2 tests run without Docker. The PostgreSQL Testcontainers test is skipped w
 
 - [Phase 1: Job Management](docs/PHASE-1.md)
 - [Phase 2: Basic Execution Engine](docs/PHASE-2.md)
+- [Phase 3: Event Architecture](docs/PHASE-3.md)
+- [Phase 4: Distributed Features](docs/PHASE-4.md)
 
 ## Repository
 
