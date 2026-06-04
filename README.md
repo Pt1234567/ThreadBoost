@@ -21,10 +21,11 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | 1 | Done | Job management APIs |
 | 2 | In progress | Basic execution engine |
 | 3 | Planned | Kafka event bus |
-| 4 | Planned | Redis locks and rate limiting |
-| 5 | Planned | Spring AI agents |
-| 6 | Planned | Observability |
-| 7 | Planned | JMeter benchmarks |
+| 3 | Done locally | Kafka-shaped local event bus |
+| 4 | Done locally | Redis-shaped locks and rate limiting |
+| 5 | Done locally | Heuristic AI agents |
+| 6 | Starter | Observability artifacts |
+| 7 | Starter | JMeter smoke benchmark |
 
 ## Current APIs
 
@@ -128,6 +129,8 @@ The H2 tests run without Docker. The PostgreSQL Testcontainers test is skipped w
 - [Phase 3: Event Architecture](docs/PHASE-3.md)
 - [Phase 4: Distributed Features](docs/PHASE-4.md)
 - [Phase 5: AI Agent Engine](docs/PHASE-5.md)
+- [Phase 6: Observability](docs/PHASE-6.md)
+- [Phase 7: Performance Testing](docs/PHASE-7.md)
 
 ## Repository
 

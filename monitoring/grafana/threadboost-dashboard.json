@@ -1,0 +1,33 @@
+{
+  "title": "ThreadBoost AI - Starter Dashboard",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "title": "JVM Live Threads",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads"
+        }
+      ]
+    },
+    {
+      "title": "HTTP Requests",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "http_server_requests_seconds_count"
+        }
+      ]
+    },
+    {
+      "title": "Process CPU Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "process_cpu_usage"
+        }
+      ]
+    }
+  ]
+}
