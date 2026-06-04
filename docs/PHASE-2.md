@@ -17,6 +17,8 @@ Phase 2 begins converting stored jobs into executable work. This is intentionall
 | JVM thread health analyzer | Done |
 | Deadlock detection API | Done |
 | Race condition simulator | Done |
+| CompletableFuture pipeline demo | Done |
+| Virtual thread demo | Done |
 | Virtual thread strategy | Planned |
 
 ## API
@@ -81,6 +83,32 @@ Runs multiple threads against three counters:
 
 The unsafe count may lose updates. The atomic and locked counts should match the expected count.
 
+```http
+POST /api/lab/completable-future/report
+```
+
+Runs a small pipeline:
+
+```text
+fetch user data + fetch analytics
+  -> combine
+  -> format report
+  -> notify user
+```
+
+This demonstrates `supplyAsync`, `thenCombine`, `thenApply`, `exceptionally`, and `join`.
+
+```http
+POST /api/lab/virtual-threads/demo
+Content-Type: application/json
+
+{
+  "taskCount": 100
+}
+```
+
+Runs many small blocking-style tasks using `Executors.newVirtualThreadPerTaskExecutor()`.
+
 ## Code flow
 
 ```text
@@ -105,15 +133,17 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 - Added `GET /api/thread/metrics` and `POST /api/thread/config`.
 - Added `ThreadHealthAnalyzer` using JVM `ThreadMXBean`.
 - Added race condition simulator using unsafe, atomic, and locked counters.
+- Added CompletableFuture report pipeline.
+- Added Java 21 virtual thread demo.
 - Added `InvalidJobStateException` and `409 Conflict` handling.
 - Added service and controller tests for execution.
 
 ## Next steps
 
-1. Move execution into background work while returning quickly from the API.
-2. Add a virtual thread executor.
-3. Add CompletableFuture pipeline examples.
-4. Add rejection-policy examples.
+1. Move real job execution into background work while returning quickly from the API.
+2. Add a proper execution strategy selector.
+3. Add rejection-policy examples.
+4. Add Kafka event publishing for `job-created`, `job-completed`, and `job-failed`.
 
 ## Interview questions
 
@@ -136,3 +166,11 @@ Async execution adds lifecycle complexity. First we should make the state model 
 5. Why use `ThreadMXBean`?
 
 It exposes JVM thread information without external tooling, which is useful for debugging blocked, waiting, and deadlocked threads.
+
+6. When are virtual threads useful?
+
+They are useful when tasks spend a lot of time blocked on IO. They are not a magic speedup for CPU-heavy work.
+
+7. Why use `thenCombine` in the report pipeline?
+
+It waits for two independent async results and combines them without blocking the calling thread early.

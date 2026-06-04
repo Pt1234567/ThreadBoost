@@ -41,6 +41,8 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | GET | `/api/thread/health` | Count JVM thread states |
 | GET | `/api/thread/deadlocks` | Detect JVM deadlocks |
 | POST | `/api/simulation/race` | Compare unsafe, atomic, and locked counters |
+| POST | `/api/lab/completable-future/report` | Run a small CompletableFuture pipeline |
+| POST | `/api/lab/virtual-threads/demo` | Run a Java 21 virtual thread demo |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start
