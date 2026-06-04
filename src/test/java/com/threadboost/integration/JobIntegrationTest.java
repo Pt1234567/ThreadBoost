@@ -47,6 +47,10 @@ class JobIntegrationTest {
                 .andExpect(jsonPath("$.description").value("Generate customer reports"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
 
+        mockMvc.perform(post("/api/jobs/{id}/execute", jobId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUCCESS"));
+
         mockMvc.perform(get("/api/jobs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(jobId));
