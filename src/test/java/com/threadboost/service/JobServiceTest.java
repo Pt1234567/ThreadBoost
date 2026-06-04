@@ -7,6 +7,7 @@ import com.threadboost.dto.response.JobCreatedResponse;
 import com.threadboost.dto.response.JobResponse;
 import com.threadboost.exception.InvalidJobStateException;
 import com.threadboost.exception.ResourceNotFoundException;
+import com.threadboost.event.JobEventPublisher;
 import com.threadboost.execution.JobExecutor;
 import com.threadboost.mapper.JobMapper;
 import com.threadboost.repository.JobRepository;
@@ -35,13 +36,16 @@ class JobServiceTest {
     @Mock
     private JobExecutor jobExecutor;
 
+    @Mock
+    private JobEventPublisher jobEventPublisher;
+
     private final JobMapper jobMapper = new JobMapper();
 
     private JobService jobService;
 
     @BeforeEach
     void setUp() {
-        jobService = new JobService(jobRepository, jobMapper, jobExecutor);
+        jobService = new JobService(jobRepository, jobMapper, jobExecutor, jobEventPublisher);
     }
 
     @Test
@@ -59,6 +63,7 @@ class JobServiceTest {
         assertThat(result.status()).isEqualTo(JobStatus.PENDING);
         assertThat(result.id()).isNotNull();
         verify(jobRepository).save(any(Job.class));
+        verify(jobEventPublisher).publishJobCreated(any(Job.class));
     }
 
     @Test
@@ -90,6 +95,7 @@ class JobServiceTest {
         assertThat(result.startedAt()).isNotNull();
         assertThat(result.completedAt()).isNotNull();
         verify(jobExecutor).execute(job);
+        verify(jobEventPublisher).publishJobCompleted(job);
     }
 
     @Test

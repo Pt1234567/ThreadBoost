@@ -7,6 +7,7 @@ import com.threadboost.dto.response.JobCreatedResponse;
 import com.threadboost.dto.response.JobResponse;
 import com.threadboost.exception.InvalidJobStateException;
 import com.threadboost.exception.ResourceNotFoundException;
+import com.threadboost.event.JobEventPublisher;
 import com.threadboost.execution.JobExecutor;
 import com.threadboost.mapper.JobMapper;
 import com.threadboost.repository.JobRepository;
@@ -27,17 +28,25 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobMapper jobMapper;
     private final JobExecutor jobExecutor;
+    private final JobEventPublisher jobEventPublisher;
 
-    public JobService(JobRepository jobRepository, JobMapper jobMapper, JobExecutor jobExecutor) {
+    public JobService(
+            JobRepository jobRepository,
+            JobMapper jobMapper,
+            JobExecutor jobExecutor,
+            JobEventPublisher jobEventPublisher
+    ) {
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
         this.jobExecutor = jobExecutor;
+        this.jobEventPublisher = jobEventPublisher;
     }
 
     @Transactional
     public JobCreatedResponse createJob(CreateJobRequest request) {
         Job job = jobMapper.toEntity(request);
         Job saved = jobRepository.save(job);
+        jobEventPublisher.publishJobCreated(saved);
         log.info("Job created id={} status={}", saved.getId(), saved.getStatus());
         return jobMapper.toCreatedResponse(saved);
     }
@@ -76,11 +85,13 @@ public class JobService {
             job.setStatus(JobStatus.SUCCESS);
             job.setCompletedAt(Instant.now());
             job.setFailureReason(null);
+            jobEventPublisher.publishJobCompleted(job);
             log.info("Job executed id={} status={}", job.getId(), job.getStatus());
         } catch (RuntimeException ex) {
             job.setStatus(JobStatus.FAILED);
             job.setCompletedAt(Instant.now());
             job.setFailureReason(ex.getMessage());
+            jobEventPublisher.publishJobFailed(job);
             log.warn("Job failed id={} reason={}", job.getId(), ex.getMessage());
         }
 

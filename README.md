@@ -43,6 +43,7 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | POST | `/api/simulation/race` | Compare unsafe, atomic, and locked counters |
 | POST | `/api/lab/completable-future/report` | Run a small CompletableFuture pipeline |
 | POST | `/api/lab/virtual-threads/demo` | Run a Java 21 virtual thread demo |
+| GET | `/api/events` | View local job events (`job-created`, `job-completed`, `job-failed`) |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start

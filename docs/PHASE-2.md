@@ -143,7 +143,7 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 1. Move real job execution into background work while returning quickly from the API.
 2. Add a proper execution strategy selector.
 3. Add rejection-policy examples.
-4. Add Kafka event publishing for `job-created`, `job-completed`, and `job-failed`.
+4. Replace the local event publisher with Kafka when infrastructure is ready.
 
 ## Interview questions
 
