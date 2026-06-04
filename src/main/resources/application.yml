@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: threadboost-ai
+  datasource:
+    url: jdbc:postgresql://localhost:5432/threadboost
+    username: threadboost
+    password: threadboost
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    com.threadboost: INFO
+    org.hibernate.SQL: WARN
