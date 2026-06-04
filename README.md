@@ -38,6 +38,9 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | GET | `/api/executor/stats` | View simple execution counters |
 | GET | `/api/thread/metrics` | View thread pool metrics |
 | POST | `/api/thread/config` | Tune thread pool sizes at runtime |
+| GET | `/api/thread/health` | Count JVM thread states |
+| GET | `/api/thread/deadlocks` | Detect JVM deadlocks |
+| POST | `/api/simulation/race` | Compare unsafe, atomic, and locked counters |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start

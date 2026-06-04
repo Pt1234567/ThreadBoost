@@ -14,6 +14,9 @@ Phase 2 begins converting stored jobs into executable work. This is intentionall
 | Simple executor stats endpoint | Done |
 | Custom thread pool execution | Done |
 | Runtime thread pool config | Done |
+| JVM thread health analyzer | Done |
+| Deadlock detection API | Done |
+| Race condition simulator | Done |
 | Virtual thread strategy | Planned |
 
 ## API
@@ -54,6 +57,30 @@ Content-Type: application/json
 
 Updates the executor size at runtime. `corePoolSize` must be less than or equal to `maxPoolSize`.
 
+```http
+GET /api/thread/health
+```
+
+Counts JVM threads by state: `RUNNABLE`, `BLOCKED`, `WAITING`, `TIMED_WAITING`, and `TERMINATED`.
+
+```http
+GET /api/thread/deadlocks
+```
+
+Uses `ThreadMXBean.findDeadlockedThreads()` to report whether the JVM currently has deadlocked threads.
+
+```http
+POST /api/simulation/race
+```
+
+Runs multiple threads against three counters:
+
+- unsafe integer counter
+- `AtomicInteger` counter
+- `ReentrantLock` protected counter
+
+The unsafe count may lose updates. The atomic and locked counts should match the expected count.
+
 ## Code flow
 
 ```text
@@ -76,14 +103,16 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 - Added custom `ThreadPoolExecutor` with named worker threads.
 - Added priority-aware task queue using `PriorityBlockingQueue`.
 - Added `GET /api/thread/metrics` and `POST /api/thread/config`.
+- Added `ThreadHealthAnalyzer` using JVM `ThreadMXBean`.
+- Added race condition simulator using unsafe, atomic, and locked counters.
 - Added `InvalidJobStateException` and `409 Conflict` handling.
 - Added service and controller tests for execution.
 
 ## Next steps
 
 1. Move execution into background work while returning quickly from the API.
-2. Add tests for failed execution and retry count behavior.
-3. Compare `THREAD_POOL` and `VIRTUAL_THREAD` strategies.
+2. Add a virtual thread executor.
+3. Add CompletableFuture pipeline examples.
 4. Add rejection-policy examples.
 
 ## Interview questions
@@ -99,3 +128,11 @@ The request is valid, but the current job state does not allow the operation.
 3. Why not start with async execution immediately?
 
 Async execution adds lifecycle complexity. First we should make the state model correct, then move execution to the background.
+
+4. Why can the unsafe counter lose updates?
+
+`count++` is not one atomic operation. It reads, increments, and writes, so two threads can overwrite each other.
+
+5. Why use `ThreadMXBean`?
+
+It exposes JVM thread information without external tooling, which is useful for debugging blocked, waiting, and deadlocked threads.
