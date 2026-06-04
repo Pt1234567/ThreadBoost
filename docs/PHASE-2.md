@@ -12,7 +12,8 @@ Phase 2 begins converting stored jobs into executable work. This is intentionall
 | Status transition tracking | Done |
 | Conflict response for invalid state | Done |
 | Simple executor stats endpoint | Done |
-| Real thread pool execution | Planned |
+| Custom thread pool execution | Done |
+| Runtime thread pool config | Done |
 | Virtual thread strategy | Planned |
 
 ## API
@@ -35,6 +36,24 @@ GET /api/executor/stats
 
 Returns the current executor mode, number of finished executions, active jobs, and available processors.
 
+```http
+GET /api/thread/metrics
+```
+
+Returns core pool size, max pool size, active threads, queue size, completed tasks, and rejected tasks.
+
+```http
+POST /api/thread/config
+Content-Type: application/json
+
+{
+  "corePoolSize": 4,
+  "maxPoolSize": 12
+}
+```
+
+Updates the executor size at runtime. `corePoolSize` must be less than or equal to `maxPoolSize`.
+
 ## Code flow
 
 ```text
@@ -54,15 +73,18 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 - Added `SimpleJobExecutor` as the first implementation.
 - Added `POST /api/jobs/{id}/execute`.
 - Added `GET /api/executor/stats`.
+- Added custom `ThreadPoolExecutor` with named worker threads.
+- Added priority-aware task queue using `PriorityBlockingQueue`.
+- Added `GET /api/thread/metrics` and `POST /api/thread/config`.
 - Added `InvalidJobStateException` and `409 Conflict` handling.
 - Added service and controller tests for execution.
 
 ## Next steps
 
-1. Add a real `ThreadPoolTaskExecutor` bean.
-2. Move execution into background work while returning quickly from the API.
-3. Add tests for failed execution and retry count behavior.
-4. Compare `THREAD_POOL` and `VIRTUAL_THREAD` strategies.
+1. Move execution into background work while returning quickly from the API.
+2. Add tests for failed execution and retry count behavior.
+3. Compare `THREAD_POOL` and `VIRTUAL_THREAD` strategies.
+4. Add rejection-policy examples.
 
 ## Interview questions
 

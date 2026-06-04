@@ -53,8 +53,13 @@ class JobIntegrationTest {
 
         mockMvc.perform(get("/api/executor/stats"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mode").value("SIMPLE_SYNC"))
+                .andExpect(jsonPath("$.mode").value("CUSTOM_THREAD_POOL"))
                 .andExpect(jsonPath("$.executedJobCount").value(1));
+
+        mockMvc.perform(get("/api/thread/metrics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.corePoolSize").value(2))
+                .andExpect(jsonPath("$.maximumPoolSize").value(8));
 
         mockMvc.perform(get("/api/jobs"))
                 .andExpect(status().isOk())

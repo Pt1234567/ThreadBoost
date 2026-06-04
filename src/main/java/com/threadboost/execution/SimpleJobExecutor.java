@@ -11,16 +11,19 @@ public class SimpleJobExecutor implements JobExecutor {
     private static final Logger log = LoggerFactory.getLogger(SimpleJobExecutor.class);
 
     private final ExecutionTracker executionTracker;
+    private final ThreadPoolManager threadPoolManager;
 
-    public SimpleJobExecutor(ExecutionTracker executionTracker) {
+    public SimpleJobExecutor(ExecutionTracker executionTracker, ThreadPoolManager threadPoolManager) {
         this.executionTracker = executionTracker;
+        this.threadPoolManager = threadPoolManager;
     }
 
     @Override
     public void execute(Job job) {
         executionTracker.recordStarted();
         try {
-            log.info("Executing job id={} name={}", job.getId(), job.getName());
+            threadPoolManager.execute(job, () ->
+                    log.info("Executing job id={} name={} priority={}", job.getId(), job.getName(), job.getPriority()));
         } finally {
             executionTracker.recordFinished();
         }

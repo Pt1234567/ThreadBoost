@@ -36,6 +36,8 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | POST | `/api/jobs/{id}/execute` | Execute a pending job |
 | DELETE | `/api/jobs/{id}` | Delete a job |
 | GET | `/api/executor/stats` | View simple execution counters |
+| GET | `/api/thread/metrics` | View thread pool metrics |
+| POST | `/api/thread/config` | Tune thread pool sizes at runtime |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start

@@ -29,11 +29,11 @@ class ExecutorControllerTest {
 
     @Test
     void getStats_returnsExecutorStats() throws Exception {
-        when(executorStatsService.getStats()).thenReturn(new ExecutorStatsResponse("SIMPLE_SYNC", 2, 0, 8));
+        when(executorStatsService.getStats()).thenReturn(new ExecutorStatsResponse("CUSTOM_THREAD_POOL", 2, 0, 8));
 
         mockMvc.perform(get("/api/executor/stats"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mode").value("SIMPLE_SYNC"))
+                .andExpect(jsonPath("$.mode").value("CUSTOM_THREAD_POOL"))
                 .andExpect(jsonPath("$.executedJobCount").value(2))
                 .andExpect(jsonPath("$.activeJobCount").value(0))
                 .andExpect(jsonPath("$.availableProcessors").value(8));
