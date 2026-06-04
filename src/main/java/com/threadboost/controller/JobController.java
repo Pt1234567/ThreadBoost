@@ -49,4 +49,9 @@ public class JobController {
         jobService.deleteJob(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/execute")
+    public ResponseEntity<JobResponse> executeJob(@PathVariable UUID id) {
+        return ResponseEntity.ok(jobService.executeJob(id));
+    }
 }

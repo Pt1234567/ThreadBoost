@@ -4,7 +4,10 @@ import com.threadboost.domain.entity.Job;
 import com.threadboost.domain.enums.JobStatus;
 import com.threadboost.dto.request.CreateJobRequest;
 import com.threadboost.dto.response.JobCreatedResponse;
+import com.threadboost.dto.response.JobResponse;
+import com.threadboost.exception.InvalidJobStateException;
 import com.threadboost.exception.ResourceNotFoundException;
+import com.threadboost.execution.JobExecutor;
 import com.threadboost.mapper.JobMapper;
 import com.threadboost.repository.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,13 +32,16 @@ class JobServiceTest {
     @Mock
     private JobRepository jobRepository;
 
+    @Mock
+    private JobExecutor jobExecutor;
+
     private final JobMapper jobMapper = new JobMapper();
 
     private JobService jobService;
 
     @BeforeEach
     void setUp() {
-        jobService = new JobService(jobRepository, jobMapper);
+        jobService = new JobService(jobRepository, jobMapper, jobExecutor);
     }
 
     @Test
@@ -62,5 +69,40 @@ class JobServiceTest {
         assertThatThrownBy(() -> jobService.getJob(id))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining(id.toString());
+    }
+
+    @Test
+    void executeJob_whenPending_marksJobSuccessful() {
+        UUID id = UUID.randomUUID();
+        Job job = new Job();
+        job.setId(id);
+        job.setName("Generate customer reports");
+        job.setDescription("Generate customer reports");
+        job.setStatus(JobStatus.PENDING);
+        job.setRetryCount(0);
+        job.setCreatedAt(Instant.now());
+
+        when(jobRepository.findById(id)).thenReturn(Optional.of(job));
+
+        JobResponse result = jobService.executeJob(id);
+
+        assertThat(result.status()).isEqualTo(JobStatus.SUCCESS);
+        assertThat(result.startedAt()).isNotNull();
+        assertThat(result.completedAt()).isNotNull();
+        verify(jobExecutor).execute(job);
+    }
+
+    @Test
+    void executeJob_whenAlreadySuccessful_throwsConflictException() {
+        UUID id = UUID.randomUUID();
+        Job job = new Job();
+        job.setId(id);
+        job.setStatus(JobStatus.SUCCESS);
+
+        when(jobRepository.findById(id)).thenReturn(Optional.of(job));
+
+        assertThatThrownBy(() -> jobService.executeJob(id))
+                .isInstanceOf(InvalidJobStateException.class)
+                .hasMessageContaining("PENDING");
     }
 }

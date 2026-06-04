@@ -103,4 +103,17 @@ class JobControllerTest {
         mockMvc.perform(delete("/api/jobs/{id}", id))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void executeJob_returnsSuccessStatus() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(jobService.executeJob(id)).thenReturn(
+                new JobResponse(id, "n", "d", null, null, null, JobStatus.SUCCESS, 0, null, null, null, null)
+        );
+
+        mockMvc.perform(post("/api/jobs/{id}/execute", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
+                .andExpect(jsonPath("$.status").value("SUCCESS"));
+    }
 }

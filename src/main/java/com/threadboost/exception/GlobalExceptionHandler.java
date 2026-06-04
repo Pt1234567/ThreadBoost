@@ -26,6 +26,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI(), null));
     }
 
+    @ExceptionHandler(InvalidJobStateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJobState(InvalidJobStateException ex, HttpServletRequest request) {
+        log.warn("Invalid job state: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(
+                HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI(), null));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new LinkedHashMap<>();
