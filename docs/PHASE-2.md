@@ -11,8 +11,8 @@ Phase 2 begins converting stored jobs into executable work. This is intentionall
 | Simple executor implementation | Done |
 | Status transition tracking | Done |
 | Conflict response for invalid state | Done |
+| Simple executor stats endpoint | Done |
 | Real thread pool execution | Planned |
-| Worker metrics endpoint | Planned |
 | Virtual thread strategy | Planned |
 
 ## API
@@ -28,6 +28,12 @@ PENDING -> RUNNING -> SUCCESS
 ```
 
 If the job is not `PENDING`, the API returns `409 Conflict`.
+
+```http
+GET /api/executor/stats
+```
+
+Returns the current executor mode, number of finished executions, active jobs, and available processors.
 
 ## Code flow
 
@@ -47,6 +53,7 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 - Added `JobExecutor` as a small interface.
 - Added `SimpleJobExecutor` as the first implementation.
 - Added `POST /api/jobs/{id}/execute`.
+- Added `GET /api/executor/stats`.
 - Added `InvalidJobStateException` and `409 Conflict` handling.
 - Added service and controller tests for execution.
 
@@ -54,9 +61,8 @@ As a fresher backend project, synchronous execution is easier to inspect and tes
 
 1. Add a real `ThreadPoolTaskExecutor` bean.
 2. Move execution into background work while returning quickly from the API.
-3. Add a small `/api/executor/stats` endpoint.
-4. Add tests for failed execution and retry count behavior.
-5. Compare `THREAD_POOL` and `VIRTUAL_THREAD` strategies.
+3. Add tests for failed execution and retry count behavior.
+4. Compare `THREAD_POOL` and `VIRTUAL_THREAD` strategies.
 
 ## Interview questions
 

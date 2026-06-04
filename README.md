@@ -35,6 +35,7 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | GET | `/api/jobs` | List jobs |
 | POST | `/api/jobs/{id}/execute` | Execute a pending job |
 | DELETE | `/api/jobs/{id}` | Delete a job |
+| GET | `/api/executor/stats` | View simple execution counters |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start
@@ -83,6 +84,12 @@ Expected status flow for now:
 
 ```text
 PENDING -> RUNNING -> SUCCESS
+```
+
+Check executor stats:
+
+```http
+GET http://localhost:8080/api/executor/stats
 ```
 
 ## Run tests

@@ -51,6 +51,11 @@ class JobIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("SUCCESS"));
 
+        mockMvc.perform(get("/api/executor/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mode").value("SIMPLE_SYNC"))
+                .andExpect(jsonPath("$.executedJobCount").value(1));
+
         mockMvc.perform(get("/api/jobs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(jobId));
