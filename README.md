@@ -47,6 +47,9 @@ The goal is not to build another CRUD app. Phase 1 starts with a clean job API, 
 | POST | `/api/distributed/locks/{lockKey}/acquire` | Try to acquire a local Redis-style lock |
 | POST | `/api/distributed/locks/{lockKey}/release` | Release a local Redis-style lock |
 | POST | `/api/distributed/rate-limit/check` | Run token-bucket rate limit check |
+| POST | `/api/ai/classify` | Classify workload and recommend executor |
+| POST | `/api/ai/optimize` | Recommend executor from system pressure |
+| POST | `/api/ai/failures/analyze` | Analyze failure logs heuristically |
 | GET | `/actuator/health` | Application health |
 
 ## Quick start
@@ -124,6 +127,7 @@ The H2 tests run without Docker. The PostgreSQL Testcontainers test is skipped w
 - [Phase 2: Basic Execution Engine](docs/PHASE-2.md)
 - [Phase 3: Event Architecture](docs/PHASE-3.md)
 - [Phase 4: Distributed Features](docs/PHASE-4.md)
+- [Phase 5: AI Agent Engine](docs/PHASE-5.md)
 
 ## Repository
 
